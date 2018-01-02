@@ -123,13 +123,13 @@ void DecodeValidator::printResults()
         if(failedResultLogs.size())
             qDebug() << "  failed image files:";
 
-        for(size_t i=0; i<failedResultLogs.size(); i++)
+        for(int i=0; i<failedResultLogs.size(); i++)
             qDebug() << '\t' << failedResultLogs[i];
 
         if(inconsistentResultLogs.size())
             qDebug() << "  inconsistent image files:";
 
-        for(size_t i=0; i<inconsistentResultLogs.size(); i++)
+        for(int i=0; i<inconsistentResultLogs.size(); i++)
             qDebug() << '\t' << inconsistentResultLogs[i];
     }
 

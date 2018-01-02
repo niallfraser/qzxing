@@ -121,7 +121,7 @@ int MaskUtil::applyMaskPenaltyRule4(const ByteMatrix& matrix)
     int height = matrix.getHeight();
     for (int y = 0; y < height; y++) {
         const std::vector<byte>& arrayY = array[y];
-        for (size_t x = 0; x < width; x++) {
+        for (int x = 0; x < width; x++) {
             if (arrayY[x] == 1) {
                 numDarkCells++;
             }
@@ -169,7 +169,7 @@ bool MaskUtil::getDataMaskBit(int maskPattern, int x, int y)
         intermediate = ((temp % 3) + ((y + x) & 0x1)) & 0x1;
         break;
     default:
-        throw IllegalArgumentException("Invalid mask pattern: " + maskPattern);
+        throw IllegalArgumentException(("Invalid mask pattern: " + std::to_string(maskPattern)).c_str());
     }
     return intermediate == 0;
 }
@@ -184,7 +184,7 @@ int MaskUtil::applyMaskPenaltyRule1Internal(const ByteMatrix& matrix, bool isHor
     int iLimit = isHorizontal ? matrix.getHeight() : matrix.getWidth();
     int jLimit = isHorizontal ? matrix.getWidth() : matrix.getHeight();
     const std::vector<std::vector<byte> >& array = matrix.getArray();
-    for (size_t i = 0; i < iLimit; i++) {
+    for (int i = 0; i < iLimit; i++) {
         int numSameBitCells = 0;
         int prevBit = -1;
         for (int j = 0; j < jLimit; j++) {

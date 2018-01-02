@@ -66,6 +66,8 @@ QImage ImageHandler::extractQImage(QObject *imageObj, int offsetX, int offsetY, 
     QStyleOptionGraphicsItem styleOption;
     item->paint(&painter, &styleOption);
 #endif
+#else
+    Q_UNUSED(imageObj);
 #endif //defined(QZXING_QML)
 
     if (offsetX < 0)

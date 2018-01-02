@@ -115,7 +115,7 @@ protected:
         if(expected.size() != received.size())
             assertTrue(false);
 
-        for (int i = 0; i < expected.size(); i++) {
+        for (unsigned long i = 0; i < expected.size(); i++) {
             if (expected[i] != received[i]) {
                 qDebug() << QString::fromStdString(message) << ". Mismatch at " << QString::number(i) /*<< ". Expected " + arrayToString(expected) + ", got " +
                      arrayToString(Arrays.copyOf(received, expected.length)))*/;
@@ -128,10 +128,10 @@ protected:
                             const std::vector<byte> &expected,
                             const ArrayRef<byte> &received)
     {
-        if(expected.size() != received->size())
+        if(expected.size() != (unsigned long)received->size())
             assertTrue(false);
 
-        for (int i = 0; i < expected.size(); i++) {
+        for (unsigned long i = 0; i < expected.size(); i++) {
             if (expected[i] != received[i]) {
                 qDebug() << QString::fromStdString(message) << ". Mismatch at " << QString::number(i) /*<< ". Expected " + arrayToString(expected) + ", got " +
                      arrayToString(Arrays.copyOf(received, expected.length)))*/;

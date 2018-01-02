@@ -187,7 +187,7 @@ void MatrixUtil::embedDataBits(const BitArray& dataBits, int maskPattern, ByteMa
         if (x == 6) {
             x -= 1;
         }
-        while (y >= 0 && y < matrix.getHeight()) {
+        while (y >= 0 && (unsigned long)y < matrix.getHeight()) {
             for (int i = 0; i < 2; ++i) {
                 int xx = x - i;
                 // Skip the cell if it's not empty.
@@ -218,7 +218,7 @@ void MatrixUtil::embedDataBits(const BitArray& dataBits, int maskPattern, ByteMa
     }
     // All bits should be consumed.
     if (bitIndex != dataBits.getSize()) {
-        throw zxing::WriterException("Not all bits consumed: " + bitIndex + '/' + dataBits.getSize());
+        throw zxing::WriterException(("Not all bits consumed: " + std::to_string(bitIndex) + '/' + std::to_string(dataBits.getSize())).c_str());
     }
 }
 
@@ -269,7 +269,7 @@ void MatrixUtil::makeTypeInfoBits(const ErrorCorrectionLevel& ecLevel, int maskP
     bits.xor_(maskBits);
 
     if (bits.getSize() != 15) {  // Just in case.
-        throw WriterException("should not happen but we got: " + bits.getSize());
+        throw WriterException(("should not happen but we got: " + std::to_string(bits.getSize())).c_str());
     }
 }
 
@@ -282,7 +282,7 @@ void MatrixUtil::makeVersionInfoBits(const Version& version, BitArray& bits)
     bits.appendBits(bchCode, 12);
 
     if (bits.getSize() != 18) {  // Just in case.
-        throw WriterException("should not happen but we got: " + bits.getSize());
+        throw WriterException(("should not happen but we got: " + std::to_string(bits.getSize())).c_str());
     }
 }
 

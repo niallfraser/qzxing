@@ -121,7 +121,7 @@ void ReedSolomonTests::testDecoder(Ref<GenericGF> field,
     referenceMessage.insert(std::end(referenceMessage), std::begin(ecWords), std::end(ecWords));
 
     for (int j = 0; j < iterations; j++) {
-        for (int i = 0; i < ecWords.size(); i++) {
+        for (unsigned long i = 0; i < ecWords.size(); i++) {
             if (i > 10 && i < ecWords.size() / 2 - 10) {
                 // performance improvement - skip intermediate cases in long-running tests
                 i += ecWords.size() / 10;
@@ -131,19 +131,19 @@ void ReedSolomonTests::testDecoder(Ref<GenericGF> field,
             corrupt(message, i, field->getSize());
 
             ArrayRef<int> messageArrayRef(message.size());
-            for(int i=0; i<message.size(); i++)
+            for(unsigned long i=0; i<message.size(); i++)
                 messageArrayRef[i] = message[i];
 
             try {
                 decoder.decode(messageArrayRef, ecWords.size());
             } catch(zxing::Exception &e) {
                 // fail only if maxErrors exceeded
-                assertTrue(i > maxErrors); /*"Decode in " + field + " (" + dataWords.length + ',' + ecWords.length + ") failed at " + i + " errors: " + e,*/
+                assertTrue(i > (unsigned long)maxErrors); /*"Decode in " + field + " (" + dataWords.length + ',' + ecWords.length + ") failed at " + i + " errors: " + e,*/
                 // else stop
                 break;
             }
 
-            if (i < maxErrors) {
+            if (i < (unsigned long)maxErrors) {
                 //"Decode in " + field + " (" + dataWords.size() + ',' + ecWords.size() + ") failed at " + i + " errors"
                 assertDataEquals("decoded data error",referenceMessage, messageArrayRef);
             }
