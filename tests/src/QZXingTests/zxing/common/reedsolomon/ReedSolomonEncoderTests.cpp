@@ -38,9 +38,9 @@ void ReedSolomonTests::testQRCode()
         0x08, 0x62 });
     // real life test cases
     // synthetic test cases - suspended for now
-//    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 10, 240);
-//    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 128, 127);
-//    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 220, 35);
+    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 10, 240);
+    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 128, 127);
+    testEncodeDecodeRandom(GenericGF::QR_CODE_FIELD_256, 220, 35);
   }
 
 void ReedSolomonTests::corrupt(std::vector<byte> &received, int howMany, int max)
@@ -76,7 +76,8 @@ void ReedSolomonTests::testEncodeDecodeRandom(Ref<GenericGF> field, int dataSize
         // generate ECC words
         message = dataWords;
         encoder.encode(message, ecWords.size());
-        message.insert(std::end(message), std::begin(ecWords), std::end(ecWords));
+        for(unsigned long l = 0; l < ecWords.size(); l++)
+            ecWords[l] = message[dataSize+l];
         // check to see if Decoder can fix up to ecWords/2 random errors
         testDecoder(field, dataWords, ecWords);
     }
