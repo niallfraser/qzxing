@@ -3,6 +3,7 @@
 #include <zxing/Exception.h>
 #include <stdio.h>
 #include <string.h>
+#include <QDebug>
 
 namespace zxing {
 
@@ -41,6 +42,7 @@ void ReedSolomonEncoder::encode(std::vector<byte> &toEncode, int ecBytes)
 
     int dataBytes = toEncode.size();// - ecBytes;
     toEncode.resize(toEncode.size()+ecBytes);
+    qDebug() << "encode " << dataBytes << toEncode.size() << ecBytes;
     if (dataBytes <= 0) {
         throw Exception("No data bytes provided");
     }

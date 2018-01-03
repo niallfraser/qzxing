@@ -21,7 +21,9 @@ VERSION = 2.3
 TARGET = QZXing
 TEMPLATE = lib
 
-# CONFIG += staticlib
+CONFIG += qzxing_qml
+
+CONFIG += staticlib
 
 DEFINES -= DISABLE_LIBRARY_FEATURES
 symbian {
