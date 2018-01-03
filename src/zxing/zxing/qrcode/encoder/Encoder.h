@@ -50,7 +50,7 @@ public:
                           BitArray& bits,
                           const std::string& encoding);
 
-//protected: // comment out to run QZXing Tests
+protected:
   /**
    * Terminate bits as described in 8.4.8 and 8.4.9 of JISX0510:2004 (p.24).
    */
