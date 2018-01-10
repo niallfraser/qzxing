@@ -55,7 +55,7 @@ void QRCodeTests::testToString1() {
             " version: null\n"
             " maskPattern: -1\n"
             " matrix: null\n"
-            "\n>>";
+            ">>\n";
     assertEquals(expected, qrCode.toString());
 }
 
@@ -100,7 +100,7 @@ void QRCodeTests::testToString2()
             " 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0\n"
             " 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1\n"
             " 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0\n"
-            "\n>>";
+            ">>\n";
 
     assertEquals(expected, qrCode.toString());
 }

@@ -2,6 +2,7 @@
 #include "MaskUtil.h"
 #include <zxing/WriterException.h>
 #include "QRCode.h"
+#include "qglobal.h"
 
 namespace zxing {
 namespace qrcode {
@@ -218,7 +219,11 @@ void MatrixUtil::embedDataBits(const BitArray& dataBits, int maskPattern, ByteMa
     }
     // All bits should be consumed.
     if (bitIndex != dataBits.getSize()) {
+#ifdef Q_OS_ANDROID
+        throw zxing::WriterException(("Not all bits consumed: " + bitIndex + '/' + dataBits.getSize()));
+#else
         throw zxing::WriterException(("Not all bits consumed: " + std::to_string(bitIndex) + '/' + std::to_string(dataBits.getSize())).c_str());
+#endif
     }
 }
 
@@ -269,7 +274,11 @@ void MatrixUtil::makeTypeInfoBits(const ErrorCorrectionLevel& ecLevel, int maskP
     bits.xor_(maskBits);
 
     if (bits.getSize() != 15) {  // Just in case.
+#ifdef Q_OS_ANDROID
+        throw WriterException(("should not happen but we got: " + bits.getSize()));
+#else
         throw WriterException(("should not happen but we got: " + std::to_string(bits.getSize())).c_str());
+#endif
     }
 }
 
@@ -282,7 +291,11 @@ void MatrixUtil::makeVersionInfoBits(const Version& version, BitArray& bits)
     bits.appendBits(bchCode, 12);
 
     if (bits.getSize() != 18) {  // Just in case.
+#ifdef Q_OS_ANDROID
+        throw WriterException(("should not happen but we got: " + bits.getSize()));
+#else
         throw WriterException(("should not happen but we got: " + std::to_string(bits.getSize())).c_str());
+#endif
     }
 }
 

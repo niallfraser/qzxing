@@ -221,7 +221,7 @@ int Encoder::chooseMaskPattern(Ref<BitArray> bits,
             minPenalty = penalty;
             bestMaskPattern = maskPattern;
         }
-        std::cout << std::string("i: ") << maskPattern << std::string(", penantly: ") << penalty << std::endl;
+        //std::cout << std::string("i: ") << maskPattern << std::string(", penantly: ") << penalty << std::endl;
     }
     return bestMaskPattern;
 }

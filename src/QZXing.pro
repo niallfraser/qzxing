@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+#CONFIG += qzxing_qml
+
 include(QZXing.pri)
 
 VERSION = 2.3
@@ -21,7 +23,7 @@ VERSION = 2.3
 TARGET = QZXing
 TEMPLATE = lib
 
-# CONFIG += staticlib
+CONFIG += staticlib
 
 DEFINES -= DISABLE_LIBRARY_FEATURES
 symbian {

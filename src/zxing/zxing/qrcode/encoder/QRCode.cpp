@@ -75,7 +75,7 @@ const std::string QRCode::toString()
     else
         result << "\n matrix: null\n";
 
-    result << "\n>>";
+    result << ">>\n";
     return result.str();
 }
 
