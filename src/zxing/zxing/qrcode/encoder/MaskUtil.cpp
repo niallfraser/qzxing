@@ -2,6 +2,7 @@
 #include <zxing/common/IllegalArgumentException.h>
 #include <stdlib.h>
 #include <algorithm> 
+#include "qglobal.h"
 
 namespace zxing {
 namespace qrcode {
@@ -169,7 +170,11 @@ bool MaskUtil::getDataMaskBit(int maskPattern, int x, int y)
         intermediate = ((temp % 3) + ((y + x) & 0x1)) & 0x1;
         break;
     default:
+#ifdef Q_OS_ANDROID
+        throw IllegalArgumentException("Invalid mask pattern: " + maskPattern);
+#else
         throw IllegalArgumentException(("Invalid mask pattern: " + std::to_string(maskPattern)).c_str());
+#endif
     }
     return intermediate == 0;
 }

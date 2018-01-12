@@ -7,6 +7,7 @@ QZXingImageProvider::QZXingImageProvider() : QQuickImageProvider(QQuickImageProv
 
 QImage QZXingImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
+    Q_UNUSED(requestedSize);
     int slashIndex = id.indexOf('/');
     if (slashIndex == -1) {
         qWarning() << "Can't parse url" << id << ". Usage is <format>/<data>";
