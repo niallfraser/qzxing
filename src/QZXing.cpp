@@ -519,7 +519,7 @@ QImage QZXing::encodeData(const QString& data,
             image = QImage(bytesRef->getWidth(), bytesRef->getHeight(), QImage::Format_ARGB32);
             for(unsigned long i=0; i<bytesRef->getWidth(); i++)
                 for(unsigned long j=0; j<bytesRef->getHeight(); j++)
-                    image.setPixel(i, j, bytes[i][j] ?
+                    image.setPixel(j, i, bytes[i][j] ?
                                        qRgb(0,0,0) :
                                        qRgb(255,255,255));
 
