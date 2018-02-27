@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-#CONFIG += qzxing_qml
+CONFIG += qzxing_qml
 
 include(QZXing.pri)
 

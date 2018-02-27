@@ -14,22 +14,25 @@
 #include <zxing/qrcode/ErrorCorrectionLevel.h>
 #include <zxing/common/detector/WhiteRectangleDetector.h>
 #include <QColor>
+#include <QtCore/QTextCodec>
+#include <QDebug>
+
 
 #if QT_VERSION >= 0x040700 && QT_VERSION < 0x050000
-    #include <QtDeclarative>
+#include <QtDeclarative>
 #elif QT_VERSION >= 0x050000
-    #include <QtQml/qqml.h>
+#include <QtQml/qqml.h>
 #endif
 
 #ifdef QZXING_MULTIMEDIA
-    #include "QZXingFilter.h"
+#include "QZXingFilter.h"
 #endif //QZXING_MULTIMEDIA
 
 #ifdef QZXING_QML
-    #include <QQmlEngine>
-    #include <QQmlContext>
-    #include <QQuickImageProvider>
-    #include "QZXingImageProvider.h"
+#include <QQmlEngine>
+#include <QQmlContext>
+#include <QQuickImageProvider>
+#include "QZXingImageProvider.h"
 #endif //QZXING_QML
 
 
