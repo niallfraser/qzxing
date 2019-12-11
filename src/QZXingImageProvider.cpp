@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QUrlQuery>
 #include "QZXing.h"
+#include <QRegularExpression>
 
 QZXingImageProvider::QZXingImageProvider() : QQuickImageProvider(QQuickImageProvider::Image)
 {
@@ -11,7 +12,8 @@ QImage QZXingImageProvider::requestImage(const QString &id, QSize *size, const Q
 {
     Q_UNUSED(requestedSize);
     int slashIndex = id.indexOf('/');
-    if (slashIndex == -1) {
+    if (slashIndex == -1)
+    {
         qWarning() << "Can't parse url" << id << ". Usage is encode?<format>/<data>";
         return QImage();
     }
@@ -24,56 +26,54 @@ QImage QZXingImageProvider::requestImage(const QString &id, QSize *size, const Q
         return QImage();
     }
 
-    int optionAreaIndex = id.lastIndexOf('?');
-
     QString data;
-    QImage result;
-    if(optionAreaIndex >= 0)
+    QZXing::EncoderFormat format = QZXing::EncoderFormat_QR_CODE;
+    QZXing::EncodeErrorCorrectionLevel correctionLevel = QZXing::EncodeErrorCorrectionLevel_L;
+    bool border = false;
+    bool transparent = false;
+
+    int customSettingsIndex = id.lastIndexOf(QRegularExpression("\\?(correctionLevel|format|border|transparent)="));
+    if(customSettingsIndex >= 0)
     {
         int startOfDataIndex = slashIndex + 1;
-        data = id.mid(startOfDataIndex, optionAreaIndex - (startOfDataIndex));
+        data = id.mid(startOfDataIndex, customSettingsIndex - (startOfDataIndex));
 
         //The dummy option has been added due to a bug(?) of QUrlQuery
         // it could not recognize the first key-value pair provided
-        QUrlQuery optionQuery("options?dummy=&" + id.mid(optionAreaIndex + 1));
+        QUrlQuery optionQuery("options?dummy=&" + id.mid(customSettingsIndex + 1));
 
-        QString width = optionQuery.queryItemValue("width");
-        QString height = optionQuery.queryItemValue("height");
-        QString corretionLevel = optionQuery.queryItemValue("corretionLevel");
-        QString format = optionQuery.queryItemValue("format");
-
-        if(format != "qrcode")
-        {
-            qWarning() << "Format not supported: " << format;
-            return QImage();
+        if (optionQuery.hasQueryItem("format")) {
+            QString formatString = optionQuery.queryItemValue("format");
+            if (formatString != "qrcode") {
+                qWarning() << "Format not supported: " << formatString;
+                return QImage();
+            }
         }
 
-        if(height.isEmpty() && !width.isEmpty())
-            height = width;
+        QString correctionLevelString = optionQuery.queryItemValue("correctionLevel");
+        if(correctionLevelString == "H")
+            correctionLevel = QZXing::EncodeErrorCorrectionLevel_H;
+        else if(correctionLevelString == "Q")
+            correctionLevel = QZXing::EncodeErrorCorrectionLevel_Q;
+        else if(correctionLevelString == "M")
+            correctionLevel = QZXing::EncodeErrorCorrectionLevel_M;
+        else if(correctionLevelString == "L")
+            correctionLevel = QZXing::EncodeErrorCorrectionLevel_L;
 
-        if(width.isEmpty() && height.isEmpty())
-            width = height;
+        if (optionQuery.hasQueryItem("border"))
+            border = optionQuery.queryItemValue("border") == "true";
 
-        QZXing::EncodeErrorCorrectionLevel correctionLevelEnum;
-        if(corretionLevel == "H")
-            correctionLevelEnum = QZXing::EncodeErrorCorrectionLevel_H;
-        else if(corretionLevel == "Q")
-            correctionLevelEnum = QZXing::EncodeErrorCorrectionLevel_Q;
-        else if(corretionLevel == "M")
-            correctionLevelEnum = QZXing::EncodeErrorCorrectionLevel_M;
-        else
-            correctionLevelEnum = QZXing::EncodeErrorCorrectionLevel_L;
-
-        result = QZXing::encodeData(data, QZXing::EncoderFormat_QR_CODE,
-                                    QSize(width.toInt(), height.toInt()),
-                                    correctionLevelEnum);
+        if (optionQuery.hasQueryItem("transparent"))
+            transparent = optionQuery.queryItemValue("transparent") == "true";
     }
     else
     {
         data = id.mid(slashIndex + 1);
-        result = QZXing::encodeData(data);
     }
 
+    QZXingEncoderConfig encoderConfig(format, requestedSize, correctionLevel, border, transparent);
+
+    QImage result = QZXing::encodeData(data, encoderConfig);
     *size = result.size();
     return result;
 }

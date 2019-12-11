@@ -38,23 +38,28 @@ Ref<GenericGF> GenericGF::AZTEC_DATA_8 = DATA_MATRIX_FIELD_256;
 Ref<GenericGF> GenericGF::MAXICODE_FIELD_64 = AZTEC_DATA_6;
   
 namespace {
-  int INITIALIZATION_THRESHOLD = 0;
+  size_t INITIALIZATION_THRESHOLD = 0;
 }
   
-GenericGF::GenericGF(int primitive_, int size_, int b)
+GenericGF::GenericGF(int primitive_, size_t size_, int b)
   : size(size_), primitive(primitive_), generatorBase(b), initialized(false) {
   if (size <= INITIALIZATION_THRESHOLD) {
     initialize();
   }
 }
-  
+
+GenericGF::~GenericGF()
+{
+    return;
+}
+
 void GenericGF::initialize() {
   expTable = std::vector<int>(size);
   logTable = std::vector<int>(size);
     
   int x = 1;
     
-  for (int i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; i++) {
     expTable[i] = x;
     x <<= 1; // x = x * 2; we're assuming the generator alpha is 2
     if (x >= size) {
@@ -62,8 +67,8 @@ void GenericGF::initialize() {
       x &= size-1;
     }
   }
-  for (int i = 0; i < size-1; i++) {
-    logTable[expTable[i]] = i;
+  for (size_t i = 0; i < size-1; i++) {
+    logTable.at(expTable.at(i)) = i;
   }
   //logTable[0] == 0 but this should never be used
   ArrayRef<int> coefficients_zero(1);
@@ -143,7 +148,7 @@ int GenericGF::multiply(int a, int b) {
   return expTable[(logTable[a] + logTable[b]) % (size - 1)];
   }
     
-int GenericGF::getSize() {
+size_t GenericGF::getSize() {
   return size;
 }
 

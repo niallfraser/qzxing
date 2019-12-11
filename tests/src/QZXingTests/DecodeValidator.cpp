@@ -1,8 +1,10 @@
 #include "DecodeValidator.h"
 
+#include <QDebug>
 #include <QFile>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QTextStream>
 
 #define LOG_OUTPUT_DIVIDER  "##############################################"
 #define LOG_SECTOR_TITLE(a)    '\n' << LOG_OUTPUT_DIVIDER\

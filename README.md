@@ -1,4 +1,4 @@
-# qzxing
+# qzxing [![Build Status](https://travis-ci.com/ftylitak/qzxing.svg?branch=master)](https://travis-ci.com/ftylitak/qzxing) [![Build Status](https://ci.appveyor.com/api/projects/status/0033p4dyo49iy5jq?svg=true)](https://ci.appveyor.com/project/ftylitak/qzxing) [![Total alerts](https://img.shields.io/lgtm/alerts/g/ftylitak/qzxing.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ftylitak/qzxing/alerts/) [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/ftylitak/qzxing.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ftylitak/qzxing/context:cpp)
 Qt/QML wrapper library for the [ZXing](https://github.com/zxing/zxing) barcode image processing library. 
 
 Supports barcode decoding for the following types: 
@@ -97,7 +97,7 @@ Follows simple code snippets that brefly show the use of the library. For more d
 ### C++/Qt 
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
@@ -114,7 +114,7 @@ int main()
 First register QZXing type to the QML engine.
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
@@ -166,7 +166,7 @@ Use the encoding function with its default settings:
 * Error Correction Level: Low (L)
 
 ```cpp
-#include <QZXing.h>
+#include "QZXing.h"
 
 int main() 
 {
@@ -204,15 +204,16 @@ Image{
 }
 ```
 
-Or use the encoding function with custom settings that are passed like URL query parameters:
+Or use the encoding function with the optional custom settings that are passed like URL query parameters:
 
-| attribute name | value      | description                                   |
-| -------------- | ---------- | --------------------------------------------- |
-| width          | int        | width in pixels                               |
-| height         | int        | height in pixels                              |
-| corretionLevel | L, M, Q, H | the error correction level                    |
-| format         | qrcode     | the encode formatter. Currently only QR Code. |
+| attribute name  | value       | description                                   |
+| --------------- | ----------  | --------------------------------------------- |
+| border          | true, false | image has border (white 1px)                  |
+| correctionLevel | L, M, Q, H  | the error correction level                    |
+| format          | qrcode      | the encode formatter. Currently only QR Code. |
+| transparent     | true, false | whether the black pixels are transparent      |
 
+the size of the image can be adjusted by using the Image.sourceWidth and Image.sourceHeight properties of Image QML element.
 
 ```qml
 import QZXing 2.3
@@ -224,11 +225,10 @@ TextField {
 
 Image{
 	source: "image://QZXing/encode/" + inputField.text +
-					"?width=250" +
-					"&height=250" +
-					"&corretionLevel=M" +
+					"?correctionLevel=M" +
 					"&format=qrcode"
-	cache: false;
+	sourceSize.width: 320
+	sourceSize.height: 320
 }
 ```
 
