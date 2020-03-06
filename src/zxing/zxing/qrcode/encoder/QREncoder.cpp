@@ -11,7 +11,7 @@
 #include <limits>
 #include "MatrixUtil.h"
 #include <string>
-#include "zxing/common/StringUtils.h"
+#include <zxing/common/StringUtils.h>
 #include <QDebug>
 #include <QString>
 
@@ -76,7 +76,7 @@ Ref<QRCode> Encoder::encode(const std::wstring& content, ErrorCorrectionLevel &e
     BitArray dataBits;
     appendBytes(content, mode, dataBits, encoding);
 
-    Version* version;
+    Ref<Version> version;
     if (hints != ZXING_NULLPTR/* && hints->containsKey(EncodeHintType.QR_VERSION)*/) {
         version = Version::getVersionForNumber(1); //should version number be passed as argument?
         int bitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, version);
@@ -87,13 +87,11 @@ Ref<QRCode> Encoder::encode(const std::wstring& content, ErrorCorrectionLevel &e
         version = recommendVersion(ecLevel, mode, headerBits, dataBits);
     }
 
-    qDebug() << version->getVersionNumber() << ": " << content.size();
-
     BitArray headerAndDataBits;
     headerAndDataBits.appendBitArray(headerBits);
     // Find "length" of main segment and write it
     int numLetters = (mode == Mode::BYTE) ? dataBits.getSizeInBytes() : int(content.length());
-    appendLengthInfo(numLetters, *version, mode, headerAndDataBits);
+    appendLengthInfo(numLetters, version, mode, headerAndDataBits);
     // Put data together into the overall payload
     headerAndDataBits.appendBitArray(dataBits);
 
@@ -130,7 +128,7 @@ Ref<QRCode> Encoder::encode(const std::wstring& content, ErrorCorrectionLevel &e
     //return NULL;
 }
 
-bool Encoder::willFit(int numInputBits, Version* version, const ErrorCorrectionLevel &ecLevel) {
+bool Encoder::willFit(int numInputBits, Ref<Version> version, const ErrorCorrectionLevel &ecLevel) {
       // In the following comments, we use numbers of Version 7-H.
       // numBytes = 196
       int numBytes = version->getTotalCodewords();
@@ -161,11 +159,11 @@ int Encoder::getAlphanumericCode(int code)
    */
 Mode Encoder::chooseMode(const std::wstring& content, const std::string& encoding)
 {
-    if (encoding == "Shift_JIS") 
-	{
+    if (encoding == "Shift_JIS")
+    {
         std::cout << "DEBUG: Shift_JIS detected...be aware!" << std::endl;
         return Mode::BYTE;
-	}
+    }
 
     bool hasNumeric = false;
     bool hasAlphanumeric = false;
@@ -211,7 +209,7 @@ Mode Encoder::chooseMode(const std::wstring& content, const std::string& encodin
 
 int Encoder::chooseMaskPattern(Ref<BitArray> bits,
                                ErrorCorrectionLevel& ecLevel,
-                               Version* version,
+                               Ref<Version> version,
                                Ref<ByteMatrix> matrix)
 {
 
@@ -229,11 +227,11 @@ int Encoder::chooseMaskPattern(Ref<BitArray> bits,
     return bestMaskPattern;
 }
 
-Version* Encoder::chooseVersion(int numInputBits, const ErrorCorrectionLevel &ecLevel)
+Ref<Version> Encoder::chooseVersion(int numInputBits, const ErrorCorrectionLevel &ecLevel)
 {
     // In the following comments, we use numbers of Version 7-H.
     for (int versionNum = 1; versionNum <= 40; versionNum++) {
-        Version* version = Version::getVersionForNumber(versionNum);
+        Ref<Version> version = Version::getVersionForNumber(versionNum);
         if (willFit(numInputBits, version, ecLevel)) {
             return version;
         }
@@ -418,6 +416,7 @@ BitArray* Encoder::interleaveWithECBytes(const BitArray& bits,
         message += " and ";
         message += zxing::common::StringUtils::intToStr(result->getSizeInBytes());
         message += " differ.";
+        delete result;
         throw WriterException(message.c_str());
     }
 
@@ -450,9 +449,9 @@ void Encoder::appendModeInfo(const Mode& mode, BitArray& bits)
 /**
    * Append length info. On success, store the result in "bits".
    */
-void Encoder::appendLengthInfo(int numLetters, const Version& version, const Mode& mode, BitArray& bits)
+void Encoder::appendLengthInfo(int numLetters, const Ref<Version> version, const Mode& mode, BitArray& bits)
 {
-    int numBits = mode.getCharacterCountBits(&version);
+    int numBits = mode.getCharacterCountBits(version);
     if (numLetters >= (1 << numBits)) {
         std::string message = zxing::common::StringUtils::intToStr(numLetters);
         message += " is bigger than ";
@@ -542,7 +541,7 @@ void Encoder::append8BitBytes(const std::wstring& content, BitArray& bits, const
     QString str = QString::fromStdWString(content);
     QByteArray array = str.toUtf8();
 
-    for (size_t i=0; i<array.size(); i++) {
+    for (int i=0; i<array.size(); i++) {
         bits.appendBits(array.at(i), 8);
     }
 }
@@ -581,12 +580,12 @@ void Encoder::appendECI(const zxing::common::CharacterSetECI& eci, BitArray& bit
 }
 
 int Encoder::calculateBitsNeeded(const Mode &mode, const BitArray &headerBits, const BitArray &dataBits, const
-                                 Version* version)
+                                 Ref<Version> version)
 {
     return headerBits.getSize() + mode.getCharacterCountBits(version) + dataBits.getSize();
 }
 
-Version* Encoder::recommendVersion(ErrorCorrectionLevel &ecLevel,
+Ref<Version> Encoder::recommendVersion(ErrorCorrectionLevel &ecLevel,
                                           Mode &mode,
                                           BitArray &headerBits,
                                           BitArray &dataBits)
@@ -595,7 +594,7 @@ Version* Encoder::recommendVersion(ErrorCorrectionLevel &ecLevel,
     // bits it takes to know version. First we take a guess at version by assuming version will be
     // the minimum, 1:
     int provisionalBitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, Version::getVersionForNumber(1));
-    Version* provisionalVersion = chooseVersion(provisionalBitsNeeded, ecLevel);
+    Ref<Version> provisionalVersion = chooseVersion(provisionalBitsNeeded, ecLevel);
 
     // Use that guess to calculate the right version. I am still not sure this works in 100% of cases.
     int bitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, provisionalVersion);
